@@ -22,11 +22,8 @@ namespace Assignment2.Data
             modelBuilder.Entity<Room_Location>()
                 .HasKey(c => new { c.RoomNr, c.Address });
             modelBuilder.Entity<Society>()
-                .HasMany(p => p.Members)
+                .HasOne(p => p.ApprovedMember)
                 .WithMany(b => b.Society);
-            modelBuilder.Entity<Society>()
-                .HasOne(p => p.Chairman)
-                .WithMany(b => b.Chairs);
             modelBuilder.Entity<Reservation>()
               .HasOne(b => b.BookedRooms)
               .WithMany(p => p.Reservations);
@@ -54,7 +51,7 @@ namespace Assignment2.Data
           Console.WriteLine("{0,-25}{1,-15}{2,-15}{3,-15}", "Activity", "CVR", "Chairman", "Address");
           foreach (var s in societies)
           {
-            Console.WriteLine($"{s.Activity,-25}{s.CVR,-15}{s.Chairman.Name,-15}{s.Address,-15}");
+            Console.WriteLine($"{s.Activity,-25}{s.CVR,-15}{s.ApprovedMember.Name,-15}{s.Address,-15}");
           }
           Console.WriteLine("");
           Console.WriteLine("");
@@ -68,7 +65,20 @@ namespace Assignment2.Data
           Console.WriteLine($"{"Booked Room Nr", -20}{"Booked Room Address",-25}{"Booking Society Name",-25}{"Booking Society Chairman", -25}{"Booking Chairman CPR",-25}{"StartTime",-25}{"EndTime",-25}");
           foreach (var resevation in Reservation)
           {
-            Console.WriteLine($"{resevation.BookedRooms.RoomNr,-20}{resevation.BookedRooms.Address, -25}{resevation.BookingSociety.Name,-25}{resevation.BookingSociety.Chairman.Name,-25}{resevation.BookingSociety.Chairman.CPR,-25}{resevation.StartTime,-25}{resevation.EndTime,-2515}");
+            Console.WriteLine($"{resevation.BookedRooms.RoomNr,-20}{resevation.BookedRooms.Address, -25}{resevation.BookingSociety.Name,-25}{resevation.BookingSociety.ApprovedMember.Name,-25}{resevation.BookingSociety.ApprovedMember.CPR,-25}{resevation.StartTime,-25}{resevation.EndTime,-2515}");
+          }
+          Console.WriteLine("");
+          Console.WriteLine("");
+        }
+
+        public void QueryFutureBookings(long keyPerson, DateTime dateTime)
+        {
+          var Res= Reservations.Where(r => r.BookingMembers.CPR == keyPerson && r.StartTime >= dateTime).ToList();
+          Console.WriteLine($"Query for FutureBookings");
+          Console.WriteLine($"{"Booked Room Nr", -20}{"Booked Room Address",-25}{"Booking Society Name",-25}{"StartTime",-25}{"EndTime",-25}{"Access Method",-25}");
+          foreach (var resevation in Res)
+          {
+            Console.WriteLine($"{resevation.BookedRooms.RoomNr,-20}{resevation.BookedRooms.Address, -25}{resevation.BookingSociety.Name,-25}{resevation.StartTime,-25}{resevation.EndTime,-2515}{resevation.BookedRooms.AccessMethod,-25}");
           }
           Console.WriteLine("");
           Console.WriteLine("");
@@ -85,24 +95,26 @@ namespace Assignment2.Data
             AvailableTime = new List<DateTimeCostume>(){availTime},
             Items = new HashSet<Property_Type>(){item},
             MaxOccupants = 1,
-            Reservations = new List<Reservation>()
+            Reservations = new List<Reservation>(),
+            AccessMethod = "Access Code"
           };
 
           var person = new Person()
           {
-            Chairs = new List<Society>(),
             CPR = 123456789,
             Name = "Hans Hansen",
-            Society = new List<Society>()
+            Society = new List<Society>(),
+            HomeAddress = "New York",
+            PassPortNr = 123,
+            PhoneNr = 987654321
           };
 
           var soc = new Society()
           {
             Activity = "Paintball",
             Address = "New York Street",
-            Chairman = null,
+            ApprovedMember = null,
             CVR = 123456,
-            Members = new List<Person>(),
             Name = "New York Paintball Club"
           };
 
@@ -115,9 +127,7 @@ namespace Assignment2.Data
             EndTime = new DateTime(2022,9,1,14,0,0)
           };
 
-          soc.Chairman = person;
-          soc.Members.Add(person);
-          person.Chairs.Add(soc);
+          soc.ApprovedMember = person;
 
           Reservations.Add(Res);
           People.Add(person);

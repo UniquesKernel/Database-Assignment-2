@@ -11,5 +11,6 @@ namespace Assignment2.Models
         public HashSet<Property_Type>? Items { get; set; }
         public List<Reservation> Reservations { get; set; }
         public List<DateTimeCostume> AvailableTime { get; set; }
+        public string AccessMethod { get; set; }
     }
 }
