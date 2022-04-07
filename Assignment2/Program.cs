@@ -12,5 +12,11 @@ using (var context = new ApplicationDbContext())
 
     context.SaveChanges();
 
-    Console.WriteLine(context.Property_Types.Include(x => x.Item).ToList().ToString());
+    var getProperties = context.Property_Types.ToList();
+    
+    foreach (var property in getProperties)
+    {
+        Console.WriteLine(property.Item);
+    }
+    
 }

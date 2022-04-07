@@ -18,6 +18,13 @@ namespace Assignment2.Data
         {
             modelBuilder.Entity<Room_Location>()
                 .HasKey(c => new { c.RoomNr, c.Address });
+            modelBuilder.Entity<Society>()
+                .HasMany(p => p.Members)
+                .WithMany(b => b.Society);
+            modelBuilder.Entity<Society>()
+                .HasOne(p => p.Chairman)
+                .WithMany(b => b.Chairs);
         }
+
     }
 }

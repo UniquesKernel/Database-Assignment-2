@@ -6,6 +6,8 @@ namespace Assignment2.Models
     {   
         [Key]
         public long CPR { get; set; }
-        public Society Society { get; set; }
+        public List<Society> Society { get; set; }
+
+        public List<Society> Chairs { get; set; }  
     }
 }
