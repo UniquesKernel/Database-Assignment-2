@@ -7,7 +7,7 @@ namespace Assignment2.Data
     public class ApplicationDbContext : DbContext
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-            => optionsBuilder.UseInMemoryDatabase("Assigment2DB");
+             => optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=BreakfasBuffet;Trusted_Connection=True;MultipleActiveResultSets=true");
 
         public DbSet<Municipality> Municipalities { get; set; }
         public DbSet<Person> People { get; set; }
@@ -26,12 +26,19 @@ namespace Assignment2.Data
                 .WithMany(b => b.Society);
             modelBuilder.Entity<Society>()
                 .HasOne(p => p.Chairman)
-                .WithMany(b => b.Chairs);
+                .WithMany(b => b.Chairs)
+                .OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<Reservation>()
               .HasOne(b => b.BookedRooms)
               .WithMany(p => p.Reservations);
             modelBuilder.Entity<DateTimeCostume>()
               .HasKey(time => time.CosDateTime);
+
+            modelBuilder.Entity<Person>()
+              .HasMany(p => p.Reservations)
+              .WithOne(r => r.BookingMembers)
+              .OnDelete(DeleteBehavior.NoAction);
+
         }
 
         public void QueryMunicipality()
@@ -54,7 +61,7 @@ namespace Assignment2.Data
           Console.WriteLine("{0,-25}{1,-15}{2,-15}{3,-15}", "Activity", "CVR", "Chairman", "Address");
           foreach (var s in societies)
           {
-            Console.WriteLine($"{s.Activity,-25}{s.CVR,-15}{s.Chairman.Name,-15}{s.Address,-15}");
+            Console.WriteLine($"{s.Activity,-25}{s.CVR,-15}{s.Chairman.FirstName,-15}{s.Chairman.LastName,-15}{s.Address,-15}");
           }
           Console.WriteLine("");
           Console.WriteLine("");
@@ -68,7 +75,7 @@ namespace Assignment2.Data
           Console.WriteLine($"{"Booked Room Nr", -20}{"Booked Room Address",-25}{"Booking Society Name",-25}{"Booking Society Chairman", -25}{"Booking Chairman CPR",-25}{"StartTime",-25}{"EndTime",-25}");
           foreach (var resevation in Reservation)
           {
-            Console.WriteLine($"{resevation.BookedRooms.RoomNr,-20}{resevation.BookedRooms.Address, -25}{resevation.BookingSociety.Name,-25}{resevation.BookingSociety.Chairman.Name,-25}{resevation.BookingSociety.Chairman.CPR,-25}{resevation.StartTime,-25}{resevation.EndTime,-2515}");
+            Console.WriteLine($"{resevation.BookedRooms.RoomNr,-20}{resevation.BookedRooms.Address, -25}{resevation.BookingSociety.Name,-25}{resevation.BookingSociety.Chairman.FirstName,-25}{resevation.BookingSociety.Chairman.LastName,-25}{resevation.BookingSociety.Chairman.CPR,-25}{resevation.StartTime,-25}{resevation.EndTime,-2515}");
           }
           Console.WriteLine("");
           Console.WriteLine("");
@@ -92,7 +99,8 @@ namespace Assignment2.Data
           {
             Chairs = new List<Society>(),
             CPR = 123456789,
-            Name = "Hans Hansen",
+            FirstName = "Hans",
+            LastName = "Hansen",
             Society = new List<Society>()
           };
 
