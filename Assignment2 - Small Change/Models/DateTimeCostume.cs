@@ -1,7 +1,10 @@
-﻿namespace Assignment2.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Assignment2.Models
 {
-  public class DateTimeCostume
-  {
-    public DateTime CosDateTime { get; set; }
-  }
+    [NotMapped]
+    public class DateTimeCostume
+    {
+        public DateTime CosDateTime { get; set; }
+    }
 }

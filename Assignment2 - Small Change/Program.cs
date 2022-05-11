@@ -2,21 +2,22 @@ using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Assignment2.Data;
 using Assignment2.Models;
+using Assignment2;
 
-public class Program
+
+using (var context = new ApplicationDbContext())
 {
-  private static void Main()
-  {
-    using (var context = new ApplicationDbContext())
-    {
-      context.SeedDatabase();
+      SeedDB.Run(context);
+
       Console.WriteLine("Query the database by using one of 4 available options");
       Console.WriteLine("\t Press 1 to Query for all rooms in the municipality");
       Console.WriteLine("\t Press 2 to Query all societies by Activity");
       Console.WriteLine("\t Press 3 to Query booked rooms, the booking society and chairman");
       Console.WriteLine("\t Press 4 to Query Future Bookings of key person");
 
-      while (true)
+      TestQueries testQueries = new TestQueries();
+        
+    while (true)
       {
         Console.WriteLine("");
         Console.Write("> ");
@@ -25,32 +26,32 @@ public class Program
         switch (input)
         {
           case "1":
-            context.QueryMunicipality();
+            testQueries.QueryMunicipality(context);
             break;
           case "2":
             Console.WriteLine("Please input the activity that you are looking for");
             Console.Write("> ");
             var searchString = Console.ReadLine();
-            context.QuerySocieties(searchString);
+            testQueries.QuerySocieties(searchString,context);
             break;
           case "3":
-            context.QueryBookedRooms();
+            testQueries.QueryBookedRooms(context);
             break;
           case "4":
             Console.WriteLine("Please input you CPR Number");
             var CPR = long.Parse(Console.ReadLine());
-            Console.WriteLine("Please input the Year, Month, Day");
+            Console.WriteLine("Please input the Year");
             var year = int.Parse(Console.ReadLine());
+            Console.WriteLine("Please input the Month");
             var month = int.Parse(Console.ReadLine());
+            Console.WriteLine("Please input the Day");
             var day = int.Parse(Console.ReadLine());
-            context.QueryFutureBookings(CPR, new DateTime(year, month, day));
+            testQueries.QueryFutureBookings(CPR, new DateTime(year, month, day) ,context);
             break;
           default:
             Console.Clear();
             Console.WriteLine("It seems you input was invalid, please try again");
             break;
         }
-      }
     }
-  }
 }

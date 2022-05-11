@@ -4,8 +4,6 @@ using Assignment2.Data;
 using Assignment2.Models;
 using Assignment2;
 
-using (var context = new ApplicationDbContext())
-{
   using (var contex = new ApplicationDbContext())
   {
         SeedDB.Run(contex);
@@ -44,4 +42,3 @@ using (var context = new ApplicationDbContext())
             }
         }
     }
-}

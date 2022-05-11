@@ -5,6 +5,7 @@ namespace Assignment2.Models
     public class Room_Location
     {
         [Key]
+        public int Room_LocationId { get; set; }
         public int RoomNr { get; set; }
         public string Address { get; set;}
         public int MaxOccupants { get; set; }
