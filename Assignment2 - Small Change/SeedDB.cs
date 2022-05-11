@@ -18,12 +18,14 @@ namespace Assignment2
             Person jens = new Person() { CPR = 10987654321,
                 FirstName = "Jens", LastName = "Jensen",
                 HomeAddress = "Nordborggade22B", PhoneNr = 212123,
+                PassPortNr = 123123123,
                 @Society = new List<Society>() { society} 
             };
 
             Person hans = new Person() { CPR = 13123123211,
                 FirstName = "Hans", LastName = "Hansen",
                 HomeAddress = "Nordborggade22B", PhoneNr = 212123,
+                PassPortNr = 3123123,
                 @Society = new List<Society>() { society }
             };
 
