@@ -7,7 +7,7 @@ namespace Assignment2.Models
     public class Reservation
     { 
       [Key]
-      public int Id { get; set; }
+      public int ReservationId { get; set; }
       public Room_Location BookedRooms { get; set; }
       public Person BookingMembers { get; set; }
       public Society BookingSociety { get; set; } 

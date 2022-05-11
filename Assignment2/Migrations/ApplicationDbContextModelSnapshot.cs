@@ -17,46 +17,38 @@ namespace Assignment2.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.4")
+                .HasAnnotation("ProductVersion", "6.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("Assignment2.Models.DateTimeCostume", b =>
-                {
-                    b.Property<DateTime>("CosDateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Room_LocationAddress")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int?>("Room_LocationRoomNr")
-                        .HasColumnType("int");
-
-                    b.HasKey("CosDateTime");
-
-                    b.HasIndex("Room_LocationRoomNr", "Room_LocationAddress");
-
-                    b.ToTable("DateTimeCostume");
-                });
-
             modelBuilder.Entity("Assignment2.Models.Municipality", b =>
                 {
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("MunicipalityId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.HasKey("Name");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MunicipalityId"), 1L, 1);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("MunicipalityId");
 
                     b.ToTable("Municipalities");
                 });
 
             modelBuilder.Entity("Assignment2.Models.Person", b =>
                 {
-                    b.Property<long>("CPR")
+                    b.Property<int>("PersonId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("CPR"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PersonId"), 1L, 1);
+
+                    b.Property<long>("CPR")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -66,48 +58,54 @@ namespace Assignment2.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("CPR");
+                    b.HasKey("PersonId");
+
+                    b.HasIndex("CPR")
+                        .IsUnique();
 
                     b.ToTable("People");
                 });
 
             modelBuilder.Entity("Assignment2.Models.Property_Type", b =>
                 {
-                    b.Property<string>("Item")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Room_LocationAddress")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int?>("Room_LocationRoomNr")
+                    b.Property<int>("Property_TypeId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.HasKey("Item");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Property_TypeId"), 1L, 1);
 
-                    b.HasIndex("Room_LocationRoomNr", "Room_LocationAddress");
+                    b.Property<string>("Item")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("Room_LocationId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Property_TypeId");
+
+                    b.HasIndex("Item")
+                        .IsUnique();
+
+                    b.HasIndex("Room_LocationId");
 
                     b.ToTable("Property_Types");
                 });
 
             modelBuilder.Entity("Assignment2.Models.Reservation", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("ReservationId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReservationId"), 1L, 1);
 
-                    b.Property<string>("BookedRoomsAddress")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("BookedRoomsRoomNr")
+                    b.Property<int>("BookedRoomsRoom_LocationId")
                         .HasColumnType("int");
 
-                    b.Property<long>("BookingMembersCPR")
-                        .HasColumnType("bigint");
+                    b.Property<int>("BookingMembersPersonId")
+                        .HasColumnType("int");
 
-                    b.Property<int>("BookingSocietyCVR")
+                    b.Property<int>("BookingSocietySocietyId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("EndTime")
@@ -116,112 +114,123 @@ namespace Assignment2.Migrations
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("Id");
+                    b.HasKey("ReservationId");
 
-                    b.HasIndex("BookingMembersCPR");
+                    b.HasIndex("BookedRoomsRoom_LocationId");
 
-                    b.HasIndex("BookingSocietyCVR");
+                    b.HasIndex("BookingMembersPersonId");
 
-                    b.HasIndex("BookedRoomsRoomNr", "BookedRoomsAddress");
+                    b.HasIndex("BookingSocietySocietyId");
 
                     b.ToTable("Reservations");
                 });
 
             modelBuilder.Entity("Assignment2.Models.Room_Location", b =>
                 {
-                    b.Property<int>("RoomNr")
+                    b.Property<int>("Room_LocationId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Room_LocationId"), 1L, 1);
+
                     b.Property<string>("Address")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("MaxOccupants")
                         .HasColumnType("int");
 
-                    b.Property<string>("MunicipalityName")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("MunicipalityId")
+                        .HasColumnType("int");
 
-                    b.HasKey("RoomNr", "Address");
+                    b.Property<int>("RoomNr")
+                        .HasColumnType("int");
 
-                    b.HasIndex("MunicipalityName");
+                    b.HasKey("Room_LocationId");
+
+                    b.HasIndex("MunicipalityId");
+
+                    b.HasIndex("Address", "RoomNr")
+                        .IsUnique();
 
                     b.ToTable("Room_Locations");
                 });
 
             modelBuilder.Entity("Assignment2.Models.Society", b =>
                 {
-                    b.Property<int>("CVR")
+                    b.Property<int>("SocietyId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CVR"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SocietyId"), 1L, 1);
 
                     b.Property<string>("Activity")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Address")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("ChairmanCPR")
-                        .HasColumnType("bigint");
+                    b.Property<int>("CVR")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ChairmanPersonId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("CVR");
+                    b.HasKey("SocietyId");
 
-                    b.HasIndex("ChairmanCPR");
+                    b.HasIndex("CVR")
+                        .IsUnique();
+
+                    b.HasIndex("ChairmanPersonId");
 
                     b.ToTable("Societies");
                 });
 
             modelBuilder.Entity("PersonSociety", b =>
                 {
-                    b.Property<long>("MembersCPR")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("SocietyCVR")
+                    b.Property<int>("MembersPersonId")
                         .HasColumnType("int");
 
-                    b.HasKey("MembersCPR", "SocietyCVR");
+                    b.Property<int>("SocietiesSocietyId")
+                        .HasColumnType("int");
 
-                    b.HasIndex("SocietyCVR");
+                    b.HasKey("MembersPersonId", "SocietiesSocietyId");
+
+                    b.HasIndex("SocietiesSocietyId");
 
                     b.ToTable("PersonSociety");
-                });
-
-            modelBuilder.Entity("Assignment2.Models.DateTimeCostume", b =>
-                {
-                    b.HasOne("Assignment2.Models.Room_Location", null)
-                        .WithMany("AvailableTime")
-                        .HasForeignKey("Room_LocationRoomNr", "Room_LocationAddress");
                 });
 
             modelBuilder.Entity("Assignment2.Models.Property_Type", b =>
                 {
                     b.HasOne("Assignment2.Models.Room_Location", null)
                         .WithMany("Items")
-                        .HasForeignKey("Room_LocationRoomNr", "Room_LocationAddress");
+                        .HasForeignKey("Room_LocationId");
                 });
 
             modelBuilder.Entity("Assignment2.Models.Reservation", b =>
                 {
-                    b.HasOne("Assignment2.Models.Person", "BookingMembers")
+                    b.HasOne("Assignment2.Models.Room_Location", "BookedRooms")
                         .WithMany("Reservations")
-                        .HasForeignKey("BookingMembersCPR")
+                        .HasForeignKey("BookedRoomsRoom_LocationId")
                         .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Assignment2.Models.Person", "BookingMembers")
+                        .WithMany()
+                        .HasForeignKey("BookingMembersPersonId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Assignment2.Models.Society", "BookingSociety")
                         .WithMany()
-                        .HasForeignKey("BookingSocietyCVR")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Assignment2.Models.Room_Location", "BookedRooms")
-                        .WithMany("Reservations")
-                        .HasForeignKey("BookedRoomsRoomNr", "BookedRoomsAddress")
+                        .HasForeignKey("BookingSocietySocietyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -236,14 +245,14 @@ namespace Assignment2.Migrations
                 {
                     b.HasOne("Assignment2.Models.Municipality", null)
                         .WithMany("Room_Locations")
-                        .HasForeignKey("MunicipalityName");
+                        .HasForeignKey("MunicipalityId");
                 });
 
             modelBuilder.Entity("Assignment2.Models.Society", b =>
                 {
                     b.HasOne("Assignment2.Models.Person", "Chairman")
                         .WithMany("Chairs")
-                        .HasForeignKey("ChairmanCPR")
+                        .HasForeignKey("ChairmanPersonId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
@@ -254,13 +263,13 @@ namespace Assignment2.Migrations
                 {
                     b.HasOne("Assignment2.Models.Person", null)
                         .WithMany()
-                        .HasForeignKey("MembersCPR")
+                        .HasForeignKey("MembersPersonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Assignment2.Models.Society", null)
                         .WithMany()
-                        .HasForeignKey("SocietyCVR")
+                        .HasForeignKey("SocietiesSocietyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -273,14 +282,10 @@ namespace Assignment2.Migrations
             modelBuilder.Entity("Assignment2.Models.Person", b =>
                 {
                     b.Navigation("Chairs");
-
-                    b.Navigation("Reservations");
                 });
 
             modelBuilder.Entity("Assignment2.Models.Room_Location", b =>
                 {
-                    b.Navigation("AvailableTime");
-
                     b.Navigation("Items");
 
                     b.Navigation("Reservations");
